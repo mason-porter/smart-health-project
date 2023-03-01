@@ -39,6 +39,7 @@ dependencies:
   path_provider: any
   percent_indicator: ^4.2.2
   fluttertoast: ^8.0.9
+  sqflite: ^2.0.0+3
 
 
   # The following adds the Cupertino Icons font to your application.

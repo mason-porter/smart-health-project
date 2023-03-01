@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:record_with_play/providers/play_audio_provider.dart';
-import 'package:record_with_play/providers/record_audio_provider.dart';
-import 'package:record_with_play/screens/record_and_play_audio2.dart';
+import 'screens/tab_menu.dart';
+import 'screens/login_page.dart';
+import 'package:sqflite/sqflite.dart';
 
 void main() {
   runApp(const EntryRoot());
@@ -13,16 +12,16 @@ class EntryRoot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => RecordAudioProvider()),
-        ChangeNotifierProvider(create: (_) => PlayAudioProvider()),
-      ],
-      child: const MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Record and Play',
-        home: RecordAndPlayScreen(),
+    return MaterialApp(
+      title: 'My App',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
+      initialRoute: LoginPage.routeName, // set initial route to LoginPage
+      routes: {
+        LoginPage.routeName: (context) => const LoginPage(),
+        MainTabMenu.routeName: (context) => const MainTabMenu(),
+      },
     );
   }
 }
