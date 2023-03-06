@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/tab_menu.dart';
 import 'screens/login_page.dart';
+import 'screens/gyroscope_test.dart';
 import 'package:sqflite/sqflite.dart';
 
 void main() {
@@ -21,6 +22,7 @@ class EntryRoot extends StatelessWidget {
       routes: {
         LoginPage.routeName: (context) => const LoginPage(),
         MainTabMenu.routeName: (context) => const MainTabMenu(),
+        GyroScopeScreen.routeName: (context) => const GyroScopeScreen(),
       },
     );
   }

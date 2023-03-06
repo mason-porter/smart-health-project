@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'record_widget.dart';
+import 'gyroscope_test.dart';
 
 class MainTabMenu extends StatelessWidget {
   static const routeName = '/main';
@@ -14,7 +15,7 @@ class MainTabMenu extends StatelessWidget {
         initialIndex: 1,
         child: Scaffold(
           appBar: AppBar(
-            title: const Text('Insert App Name Here'),
+            title: const Text('Concussion Test'),
             bottom: const TabBar(
               tabs: [
                 Tab(text: 'History', icon: Icon(Icons.history)),
@@ -28,7 +29,7 @@ class MainTabMenu extends StatelessWidget {
             children: [
               RecordWidget(),
               Icon(Icons.directions_transit),
-              Icon(Icons.directions_bike),
+              GyroScopeScreen(),
             ],
           ),
         ),
