@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class GyroScopeScreen extends StatefulWidget {
+  static const routeName = '/gyro';
   const GyroScopeScreen({Key? key}) : super(key: key);
 
   @override
@@ -51,8 +52,8 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Gyroscope Sensor in Flutter"),
-        backgroundColor: Colors.redAccent,
+        title: const Text("Balance Test"),
+        backgroundColor: Colors.blueAccent,
       ),
       body: Container(
           alignment: Alignment.center,
