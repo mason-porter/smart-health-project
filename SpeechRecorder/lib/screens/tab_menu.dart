@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'record_widget.dart';
+import '../services/database/database.dart';
 import 'gyroscope_test.dart';
 
 class MainTabMenu extends StatelessWidget {
   static const routeName = '/main';
-
-  const MainTabMenu({Key? key}) : super(key: key);
+  final DatabaseHelper db;
+  final String uname;
+  const MainTabMenu({required this.db, required this.uname, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +18,7 @@ class MainTabMenu extends StatelessWidget {
         initialIndex: 1,
         child: Scaffold(
           appBar: AppBar(
-            title: const Text('Concussion Test'),
+            title: Text("Hello, " + uname),
             bottom: const TabBar(
               tabs: [
                 Tab(text: 'History', icon: Icon(Icons.history)),
