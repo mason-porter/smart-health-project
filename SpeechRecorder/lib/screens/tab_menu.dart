@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'record_widget.dart';
 import '../services/database/database.dart';
+import 'gyroscope_test.dart';
 
 class MainTabMenu extends StatelessWidget {
   static const routeName = '/main';
@@ -31,7 +32,7 @@ class MainTabMenu extends StatelessWidget {
             children: [
               RecordWidget(),
               Icon(Icons.directions_transit),
-              Icon(Icons.directions_bike),
+              GyroScopeScreen(),
             ],
           ),
         ),
