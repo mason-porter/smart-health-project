@@ -25,6 +25,7 @@ class EntryRootState0 extends State<EntryRoot> {
   }
 
   int _loggedUserId = -1;
+  String _loggedUserName = "";
 
   @override
   Widget build(BuildContext context) {
@@ -36,13 +37,18 @@ class EntryRootState0 extends State<EntryRoot> {
       initialRoute: LoginPage.routeName, // set initial route to LoginPage
       routes: {
         LoginPage.routeName: (context) => LoginPage(
+            db: dbHelper,
+            idCallback: (val) => {
+                  setState(() => {_loggedUserId = val}),
+                  debugPrint("MID: " + val.toString()),
+                },
+            nameCallback: (val) => {
+                  setState(() => {_loggedUserName = val})
+                }),
+        MainTabMenu.routeName: (context) => MainTabMenu(
               db: dbHelper,
-              idCallback: (val) => {
-                setState(() => {_loggedUserId = val}),
-                debugPrint("MID: " + val.toString()),
-              },
+              uname: _loggedUserName,
             ),
-        MainTabMenu.routeName: (context) => const MainTabMenu(),
       },
     );
   }

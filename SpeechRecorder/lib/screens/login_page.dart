@@ -5,13 +5,19 @@ import '../services/database/database.dart';
 import 'dart:async';
 
 typedef void IntCallback(int val);
+typedef void StringCallback(String val);
 
 class LoginPage extends StatelessWidget {
   static const routeName = '/login';
   final DatabaseHelper db;
   final IntCallback idCallback;
+  final StringCallback nameCallback;
 
-  LoginPage({required this.db, required this.idCallback, Key? key})
+  LoginPage(
+      {required this.db,
+      required this.idCallback,
+      required this.nameCallback,
+      Key? key})
       : super(key: key);
 
   final unameControl = TextEditingController();
@@ -40,9 +46,13 @@ class LoginPage extends StatelessWidget {
                 // simulate successful login
                 int id = await db.searchIdByUser(unameControl.text);
                 if (id != -1) {
-                  idCallback(id);
-                  Navigator.pushReplacementNamed(
-                      context, MainTabMenu.routeName);
+                  String uname = await db.searchUserById(id);
+                  if (uname != "XX2X") {
+                    idCallback(id);
+                    nameCallback(uname);
+                    Navigator.pushReplacementNamed(
+                        context, MainTabMenu.routeName);
+                  }
                 }
               },
               child: const Text('Log in'),
@@ -70,6 +80,15 @@ class LoginPage extends StatelessWidget {
                 );
               },
             ),
+            ElevatedButton(
+                child: const Text('DEBUG Show Users'),
+                onPressed: () async {
+                  Future<List<User>> fUsers = db.getUsers();
+                  List<User> users = await fUsers;
+                  for (User user in users) {
+                    debugPrint(user.toString());
+                  }
+                }),
           ],
         ),
       ),

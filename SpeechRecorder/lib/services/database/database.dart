@@ -53,6 +53,28 @@ class DatabaseHelper {
     return -1;
   }
 
+  Future<String> searchUserById(int uid) async {
+    var dbClient = await db;
+    List<String> columnsToSelect = [
+      columnName,
+    ];
+    String whereString = '$columnId= ?';
+    List<dynamic> whereArguments = [uid];
+    List<Map> result = await dbClient.query(
+      tableUsers,
+      columns: columnsToSelect,
+      where: whereString,
+      whereArgs: whereArguments,
+    );
+
+    // print the results
+    if (result.length == 1) {
+      return result[0]['name'];
+    }
+    debugPrint("Query failed | Hits: " + result.length.toString());
+    return "XX2X";
+  }
+
   Future<int> saveUser(User user) async {
     var dbClient = await db;
     return await dbClient.insert(tableUsers, user.toMap());
