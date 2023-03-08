@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:math';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,7 +14,10 @@ class GyroScopeScreen extends StatefulWidget {
 
 class _GyroScopeScreenState extends State<GyroScopeScreen> {
   double x = 0, y = 0, z = 0;
-  String direction = "none";
+  double displacement = 0;
+  Timer? timer;
+  int count = 0;
+  double initx = 0, inity = 0, initz = 0;
   customizeStatusAndNavigationBar() {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         systemNavigationBarColor: Colors.white,
@@ -24,26 +29,20 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
   @override
   void initState() {
     customizeStatusAndNavigationBar();
-    gyroscopeEvents.listen((GyroscopeEvent event) {
-      print(event);
-
-      x = event.x;
-      y = event.y;
-      z = event.z;
-
-      //rough calculation, you can use
-      //advance formula to calculate the orentation
-      if (x > 0) {
-        direction = "back";
-      } else if (x < 0) {
-        direction = "forward";
-      } else if (y > 0) {
-        direction = "left";
-      } else if (y < 0) {
-        direction = "right";
-      }
-
-      setState(() {});
+    timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      gyroscopeEvents.listen((GyroscopeEvent event) {
+        if (count == 0) {
+          initx = event.x;
+          inity = event.y;
+          initz = event.z;
+        }
+        count = count + 1;
+        displacement = displacement +
+            sqrt(pow(event.x - initx, 2) +
+                pow(event.y - inity, 2) +
+                pow(event.z - initz, 2));
+        setState(() {});
+      });
     });
     super.initState();
   }
@@ -60,7 +59,7 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
           padding: const EdgeInsets.all(30),
           child: Column(children: [
             Text(
-              direction,
+              displacement.toString(),
               style: const TextStyle(fontSize: 30),
             )
           ])),
