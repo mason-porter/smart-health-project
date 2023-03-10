@@ -5,7 +5,7 @@ Mason Porter, Ian Aponte, Pranay Reddy
 ### Project Setup
 To run the project, you will need the following software:
 * [Flutter](https://docs.flutter.dev/get-started/install) 3.7.5+
-* [XCode](https://docs.flutter.dev/get-started/install) (Debug and Emulation Environment) 13.2.1+
+* [XCode](https://docs.flutter.dev/get-started/install) (Debug and Emulation Environment) 13.2.1+ (Version 14 required for testing on iOS 16+)
 * [CocoaPods](https://cocoapods.org/) 1.11.3+
 
 Additional setup help is below:
