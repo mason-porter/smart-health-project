@@ -1,6 +1,6 @@
-final String tableUsers = 'users';
-final String columnId = 'id';
-final String columnName = 'name';
+const String tableUsers = 'users';
+const String columnId = 'id';
+const String columnName = 'name';
 
 class User {
   int? id;

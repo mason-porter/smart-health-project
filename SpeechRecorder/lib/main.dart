@@ -42,45 +42,22 @@ class EntryRootState0 extends State<EntryRoot> {
             db: dbHelper,
             idCallback: (val) => {
                   setState(() => {_loggedUserId = val}),
-                  debugPrint("MID: " + val.toString()),
+                  // debugPrint("MID: " + val.toString()),
                 },
             nameCallback: (val) => {
                   setState(() => {_loggedUserName = val})
                 }),
         MainTabMenu.routeName: (context) => MainTabMenu(
               db: dbHelper,
+              uid: _loggedUserId,
               uname: _loggedUserName,
+              logout: () => ({
+                setState(() => {_loggedUserId = -1}),
+                setState(() => {_loggedUserName = ""}),
+                Navigator.pushReplacementNamed(context, LoginPage.routeName)
+              }),
             ),
       },
     );
   }
 }
-
-
-/**
-void main() {
-  runApp(EntryRoot());
-}
-
-class EntryRoot extends StatelessWidget {
-  EntryRoot({Key? key}) : super(key: key);
-  late final dbHelper = DatabaseHelper();
-  final name = String;
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'My App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      initialRoute: LoginPage.routeName, // set initial route to LoginPage
-      routes: {
-        LoginPage.routeName: (context) => LoginPage(db: dbHelper),
-        MainTabMenu.routeName: (context) => const MainTabMenu(),
-        GyroScopeScreen.routeName: (context) => const GyroScopeScreen(),
-      },
-    );
-  }
-}
-**/

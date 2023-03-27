@@ -63,11 +63,6 @@ class LoginPage extends StatelessWidget {
                 User newUser = User();
                 newUser.name = unameControl.text;
                 int id = await db.saveUser(newUser);
-                Future<List<User>> fUsers = db.getUsers();
-                List<User> users = await fUsers;
-                for (User user in users) {
-                  debugPrint(user.toString());
-                }
                 showDialog(
                   context: context,
                   builder: (context) {
@@ -89,6 +84,12 @@ class LoginPage extends StatelessWidget {
                     debugPrint(user.toString());
                   }
                 }),
+            ElevatedButton(
+              child: const Text('DEBUG Show Tables'),
+              onPressed: () async {
+                db.debugPrintTables();
+              },
+            ),
           ],
         ),
       ),
