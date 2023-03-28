@@ -46,10 +46,12 @@ class _HistoryTestListState extends State<HistoryTestList> {
             Map<String, dynamic>? map = tests?[index].toMap();
             String ret = "";
             if (map != null) {
-              ret = "Test (" +
+              ret = "(" +
                   map["id"].toString() +
-                  ") user " +
-                  map["oId"].toString();
+                  ") | " +
+                  map["name"] +
+                  " | Score: " +
+                  map["score"].toString();
             }
             return ListTile(
               title: Text(ret),

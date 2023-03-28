@@ -41,7 +41,7 @@ class MainTabMenu extends StatelessWidget {
             children: [
               HistoryTestList(db: db, uid: uid),
               OverviewWidget(username: uname, logout: logout),
-              const GyroScopeScreen(),
+              GyroScopeScreen(db: db, uid: uid, username: uname),
             ],
           ),
         ),

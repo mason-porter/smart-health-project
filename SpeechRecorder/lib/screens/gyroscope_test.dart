@@ -3,10 +3,17 @@ import 'dart:math';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../services/database/database.dart';
+import '../classes/test.dart';
 
 class GyroScopeScreen extends StatefulWidget {
   static const routeName = '/gyro';
-  const GyroScopeScreen({Key? key}) : super(key: key);
+  final DatabaseHelper db;
+  final int uid;
+  final String username;
+  const GyroScopeScreen(
+      {required this.db, required this.uid, required this.username, Key? key})
+      : super(key: key);
 
   @override
   State<GyroScopeScreen> createState() => _GyroScopeScreenState();
@@ -34,6 +41,16 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
     super.initState();
   }
 
+  void sendResultsToDatabase(double disp) async {
+    int score = 100 - (log(disp) ~/ log(1.1));
+    Test newTest = Test();
+    newTest.name = "Test " + widget.uid.toString() + " by " + widget.username;
+    newTest.oId = widget.uid;
+    newTest.date = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    newTest.score = score;
+    int id = await widget.db.saveTest(newTest);
+  }
+
   void _startRecording() {
     _isRecording = true;
     _gyroscopeEvents.clear();
@@ -50,6 +67,7 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
 
   void _stopRecording() {
     _isRecording = false;
+    sendResultsToDatabase(displacement);
   }
 
   void _calculateDisplacement() {
