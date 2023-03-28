@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:record_with_play/screens/test_score.dart';
 import 'package:intl/intl.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:flutter/material.dart';
@@ -73,6 +74,12 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
   void _stopRecording() {
     _isRecording = false;
     sendResultsToDatabase(displacement);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TestResultScreen(score: displacement),
+      ),
+    );
   }
 
   void _calculateDisplacement() {
@@ -84,8 +91,9 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
       for (var i = 1; i < _gyroscopeEvents.length; i++) {
         displacement = displacement +
             sqrt(pow(_gyroscopeEvents[i].x - initx, 2) +
-                pow(_gyroscopeEvents[i].y - inity, 2) +
-                pow(_gyroscopeEvents[i].z - initz, 2));
+                    pow(_gyroscopeEvents[i].y - inity, 2) +
+                    pow(_gyroscopeEvents[i].z - initz, 2))
+                .round();
       }
     });
   }
