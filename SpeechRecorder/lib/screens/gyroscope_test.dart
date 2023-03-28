@@ -18,6 +18,8 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
   Timer? timer;
   int count = 0;
   double initx = 0, inity = 0, initz = 0;
+  List<GyroscopeEvent> _gyroscopeEvents = [];
+  bool _isRecording = false;
   customizeStatusAndNavigationBar() {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         systemNavigationBarColor: Colors.white,
@@ -29,22 +31,40 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
   @override
   void initState() {
     customizeStatusAndNavigationBar();
-    timer = Timer.periodic(const Duration(seconds: 10), (timer) {
-      gyroscopeEvents.listen((GyroscopeEvent event) {
-        if (count == 0) {
-          initx = event.x;
-          inity = event.y;
-          initz = event.z;
-        }
-        count = count + 1;
-        displacement = displacement +
-            sqrt(pow(event.x - initx, 2) +
-                pow(event.y - inity, 2) +
-                pow(event.z - initz, 2));
-        setState(() {});
-      });
-    });
     super.initState();
+  }
+
+  void _startRecording() {
+    _isRecording = true;
+    _gyroscopeEvents.clear();
+    gyroscopeEvents.listen((GyroscopeEvent event) {
+      if (_isRecording) {
+        setState(() {
+          _gyroscopeEvents.add(event);
+        });
+      }
+    });
+    Future.delayed(const Duration(seconds: 10), () => _stopRecording());
+    _calculateDisplacement();
+  }
+
+  void _stopRecording() {
+    _isRecording = false;
+  }
+
+  void _calculateDisplacement() {
+    gyroscopeEvents.listen((GyroscopeEvent event) {
+      displacement = 0;
+      initx = _gyroscopeEvents[0].x;
+      inity = _gyroscopeEvents[0].y;
+      initz = _gyroscopeEvents[0].z;
+      for (var i = 1; i < _gyroscopeEvents.length; i++) {
+        displacement = displacement +
+            sqrt(pow(_gyroscopeEvents[i].x - initx, 2) +
+                pow(_gyroscopeEvents[i].y - inity, 2) +
+                pow(_gyroscopeEvents[i].z - initz, 2));
+      }
+    });
   }
 
   @override
@@ -54,15 +74,22 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
         title: const Text("Balance Test"),
         backgroundColor: Colors.blueAccent,
       ),
-      body: Container(
-          alignment: Alignment.center,
-          padding: const EdgeInsets.all(30),
-          child: Column(children: [
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: _startRecording,
+              child: const Text('Start Recording'),
+            ),
+            const SizedBox(height: 16.0),
             Text(
-              displacement.toString(),
-              style: const TextStyle(fontSize: 30),
-            )
-          ])),
+              'Score: $displacement',
+              style: const TextStyle(fontSize: 24.0),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
