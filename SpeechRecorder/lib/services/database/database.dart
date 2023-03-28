@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../../classes/user.dart';
+import '../../classes/test.dart';
 import 'package:flutter/foundation.dart';
 
 class DatabaseHelper {
@@ -25,10 +26,20 @@ class DatabaseHelper {
 
   void _onCreate(Database db, int version) async {
     await db.execute('''
-      create table $tableUsers ( 
+      create table if not exists $tableUsers ( 
         $columnId integer primary key autoincrement, 
-        $columnName text not null)
+        $columnName text not null
+      );
       ''');
+    await db.execute('''
+      create table if not exists $tableTests (
+        $testId integer primary key autoincrement,
+        $testName text,
+        $testScore integer,
+        $ownerId integer,
+        $testDate integer
+      );
+    ''');
   }
 
   Future<int> searchIdByUser(String uname) async {
@@ -51,6 +62,16 @@ class DatabaseHelper {
     }
     debugPrint("Query failed | Hits: " + result.length.toString());
     return -1;
+  }
+
+  void debugPrintTables() async {
+    var dbClient = await db;
+    List<Map<String, dynamic>> tables = await dbClient
+        .query('sqlite_master', where: 'type = ?', whereArgs: ['table']);
+    List<dynamic> tableNames = tables.map((table) => table['name']).toList();
+    for (int i = 0; i < tableNames.length; i++) {
+      debugPrint(tableNames[i]);
+    }
   }
 
   Future<String> searchUserById(int uid) async {
@@ -91,5 +112,56 @@ class DatabaseHelper {
       }
     }
     return users;
+  }
+
+  Future<int> saveTest(Test test) async {
+    var dbClient = await db;
+    debugPrint("NEW: " + test.toMap().toString());
+
+    int ret = await dbClient.insert(tableTests, test.toMap());
+    List<Test> tests = await getTests();
+    for (int i = 0; i < tests.length; i++) {
+      debugPrint(tests[i].toString());
+    }
+    return ret;
+  }
+
+  Future<List<Test>> getTests() async {
+    var dbClient = await db;
+    List<Map> maps = await dbClient.query(tableTests,
+        columns: [testId, testName, testScore, ownerId, testDate]);
+    List<Test> tests = [];
+    if (maps.isNotEmpty) {
+      for (int i = 0; i < maps.length; i++) {
+        tests.add(Test.fromMap(maps[i]));
+      }
+    }
+    return tests;
+  }
+
+  Future<List<Test>> getTestsByOwnerId(int oid) async {
+    var dbClient = await db;
+    String whereString = '$ownerId= ?';
+    List<dynamic> whereArguments = [oid];
+    List<Map> result = await dbClient.query(
+      tableTests,
+      columns: [testId, testName, testScore, ownerId, testDate],
+      where: whereString,
+      whereArgs: whereArguments,
+    );
+
+    List<Test> tests = [];
+    debugPrint("Tests from Owner " +
+        oid.toString() +
+        " | Hits: " +
+        result.length.toString());
+
+    if (result.isNotEmpty) {
+      for (int i = 0; i < result.length; i++) {
+        tests.add(Test.fromMap(result[i]));
+      }
+    }
+
+    return tests;
   }
 }

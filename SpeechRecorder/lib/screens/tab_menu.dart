@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
-import 'record_widget.dart';
+import 'package:record_with_play/screens/history_test_list.dart';
+import 'package:record_with_play/screens/overview.dart';
 import '../services/database/database.dart';
 import 'gyroscope_test.dart';
+
+typedef void VoidCallback();
 
 class MainTabMenu extends StatelessWidget {
   static const routeName = '/main';
   final DatabaseHelper db;
   final String uname;
-  const MainTabMenu({required this.db, required this.uname, Key? key})
+  final int uid;
+  final VoidCallback logout;
+  const MainTabMenu(
+      {required this.db,
+      required this.uid,
+      required this.uname,
+      required this.logout,
+      Key? key})
       : super(key: key);
 
   @override
@@ -26,13 +36,12 @@ class MainTabMenu extends StatelessWidget {
                 Tab(text: 'New Test', icon: Icon(Icons.post_add_rounded)),
               ],
             ),
-            // backgroundColor: const Color(0xff2059ff),
           ),
-          body: const TabBarView(
+          body: TabBarView(
             children: [
-              RecordWidget(),
-              Icon(Icons.directions_transit),
-              GyroScopeScreen(),
+              HistoryTestList(db: db, uid: uid),
+              OverviewWidget(username: uname, logout: logout),
+              const GyroScopeScreen(),
             ],
           ),
         ),
