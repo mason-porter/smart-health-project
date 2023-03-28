@@ -126,6 +126,25 @@ class DatabaseHelper {
     return ret;
   }
 
+  Future<Test?> getTestById(int id) async {
+    var dbClient = await db;
+    String whereString = '$testId= ?';
+    List<dynamic> whereArguments = [id];
+    List<Map> maps = await dbClient.query(
+      tableTests,
+      columns: [testId, testName, testScore, ownerId, testDate],
+      where: whereString,
+      whereArgs: whereArguments,
+    );
+    Test? res;
+    if (maps.isNotEmpty) {
+      res = Test.fromMap(maps[0]);
+    } else {
+      debugPrint("WARNING: test was not found");
+    }
+    return res;
+  }
+
   Future<List<Test>> getTests() async {
     var dbClient = await db;
     List<Map> maps = await dbClient.query(tableTests,
