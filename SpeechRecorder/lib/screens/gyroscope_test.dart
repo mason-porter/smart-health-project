@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:record_with_play/screens/test_score.dart';
+import 'package:intl/intl.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,11 +44,15 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
   }
 
   void sendResultsToDatabase(double disp) async {
-    int score = 100 - (log(disp) ~/ log(1.1));
+    int score = 100 - (sqrt(100) ~/ 1);
     Test newTest = Test();
-    newTest.name = "Test " + widget.uid.toString() + " by " + widget.username;
+    DateTime d = DateTime.now();
+    newTest.date = d.millisecondsSinceEpoch ~/ 1000;
+    newTest.name = "Test by " +
+        widget.username +
+        " on " +
+        DateFormat('MM/dd/yy HH:mm').format(d);
     newTest.oId = widget.uid;
-    newTest.date = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     newTest.score = score;
     int id = await widget.db.saveTest(newTest);
   }
