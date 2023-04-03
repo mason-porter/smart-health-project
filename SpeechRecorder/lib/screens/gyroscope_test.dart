@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:record_with_play/screens/test_score.dart';
 import 'package:intl/intl.dart';
 import 'package:sensors_plus/sensors_plus.dart';
@@ -29,6 +31,9 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
   double initx = 0, inity = 0, initz = 0;
   List<GyroscopeEvent> _gyroscopeEvents = [];
   bool _isRecording = false;
+  int _countdown = 5;
+  late Timer _timer;
+  late AudioPlayer player;
   customizeStatusAndNavigationBar() {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         systemNavigationBarColor: Colors.white,
@@ -40,6 +45,7 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
   @override
   void initState() {
     customizeStatusAndNavigationBar();
+    player = AudioPlayer();
     super.initState();
   }
 
@@ -57,17 +63,37 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
     int id = await widget.db.saveTest(newTest);
   }
 
-  void _startRecording() {
-    _isRecording = true;
-    _gyroscopeEvents.clear();
-    gyroscopeEvents.listen((GyroscopeEvent event) {
-      if (_isRecording) {
-        setState(() {
-          _gyroscopeEvents.add(event);
-        });
-      }
+  Future<void> _startRecording() async {
+    var file = File('assets/countdown.mp3');
+    bool exists = await file.exists();
+    if (exists) {
+      print('File exists!');
+    } else {
+      print('File not found!');
+    }
+    await player.play('assets/countdown.mp3', isLocal: true);
+    setState(() {
+      _isRecording = true;
+      _countdown = 5;
+      _gyroscopeEvents.clear();
     });
-    Future.delayed(const Duration(seconds: 10), () => _stopRecording());
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        _countdown--;
+      });
+
+      if (_countdown == 0) {
+        _timer.cancel();
+        _stopRecording();
+      }
+      gyroscopeEvents.listen((GyroscopeEvent event) {
+        if (_isRecording) {
+          setState(() {
+            _gyroscopeEvents.add(event);
+          });
+        }
+      });
+    });
     _calculateDisplacement();
   }
 
@@ -83,8 +109,8 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
   }
 
   void _calculateDisplacement() {
+    displacement = 0;
     gyroscopeEvents.listen((GyroscopeEvent event) {
-      displacement = 0;
       initx = _gyroscopeEvents[0].x;
       inity = _gyroscopeEvents[0].y;
       initz = _gyroscopeEvents[0].z;
@@ -113,10 +139,9 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
               onPressed: _startRecording,
               child: const Text('Start Recording'),
             ),
-            const SizedBox(height: 16.0),
             Text(
-              'Score: $displacement',
-              style: const TextStyle(fontSize: 24.0),
+              '$_countdown',
+              style: const TextStyle(fontSize: 48),
             ),
           ],
         ),
