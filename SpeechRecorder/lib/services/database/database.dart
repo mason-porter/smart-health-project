@@ -27,8 +27,11 @@ class DatabaseHelper {
   void _onCreate(Database db, int version) async {
     await db.execute('''
       create table if not exists $tableUsers ( 
-        $columnId integer primary key autoincrement, 
-        $columnName text not null
+        $userId integer primary key autoincrement, 
+        $userUname text not null,
+        $userPass text not null,
+        $userName text not null,
+        $userAdmin integer not null
       );
       ''');
     await db.execute('''
@@ -42,12 +45,31 @@ class DatabaseHelper {
     ''');
   }
 
+  Future<List<User>> getUsersByUname(String uname) async {
+    var dbClient = await db;
+    String whereString = '$userUname= ?';
+    List<dynamic> whereArguments = [uname];
+    List<Map> maps = await dbClient.query(
+      tableUsers,
+      columns: [userId, userName, userUname, userPass, userAdmin],
+      where: whereString,
+      whereArgs: whereArguments,
+    );
+    List<User> users = [];
+    if (maps.isNotEmpty) {
+      for (int i = 0; i < maps.length; i++) {
+        users.add(User.fromMap(maps[i]));
+      }
+    }
+    return users;
+  }
+
   Future<int> searchIdByUser(String uname) async {
     var dbClient = await db;
     List<String> columnsToSelect = [
-      columnId,
+      userId,
     ];
-    String whereString = '$columnName= ?';
+    String whereString = '$userName= ?';
     List<dynamic> whereArguments = [uname];
     List<Map> result = await dbClient.query(
       tableUsers,
@@ -77,9 +99,9 @@ class DatabaseHelper {
   Future<String> searchUserById(int uid) async {
     var dbClient = await db;
     List<String> columnsToSelect = [
-      columnName,
+      userName,
     ];
-    String whereString = '$columnId= ?';
+    String whereString = '$userId= ?';
     List<dynamic> whereArguments = [uid];
     List<Map> result = await dbClient.query(
       tableUsers,
@@ -98,13 +120,14 @@ class DatabaseHelper {
 
   Future<int> saveUser(User user) async {
     var dbClient = await db;
+    debugPrint(user.toString());
     return await dbClient.insert(tableUsers, user.toMap());
   }
 
   Future<List<User>> getUsers() async {
     var dbClient = await db;
-    List<Map> maps =
-        await dbClient.query(tableUsers, columns: [columnId, columnName]);
+    List<Map> maps = await dbClient.query(tableUsers,
+        columns: [userId, userName, userUname, userPass, userAdmin]);
     List<User> users = [];
     if (maps.isNotEmpty) {
       for (int i = 0; i < maps.length; i++) {

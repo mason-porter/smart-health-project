@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/tab_menu.dart';
 import 'screens/login_page.dart';
+import 'screens/signup_page.dart';
 import 'services/database/database.dart';
 import 'screens/gyroscope_test.dart';
 import 'package:sqflite/sqflite.dart';
@@ -27,7 +28,7 @@ class EntryRootState0 extends State<EntryRoot> {
   }
 
   int _loggedUserId = -1;
-  String _loggedUserName = "";
+  String _loggedName = "";
 
   @override
   Widget build(BuildContext context) {
@@ -42,18 +43,21 @@ class EntryRootState0 extends State<EntryRoot> {
             db: dbHelper,
             idCallback: (val) => {
                   setState(() => {_loggedUserId = val}),
-                  // debugPrint("MID: " + val.toString()),
                 },
             nameCallback: (val) => {
-                  setState(() => {_loggedUserName = val})
-                }),
+                  setState(() => {_loggedName = val})
+                },
+            gotoSignup: () =>
+                {Navigator.pushNamed(context, SignupPage.routeName)}),
+        SignupPage.routeName: (context) => SignupPage(
+            db: dbHelper, gotoLogin: () => ({Navigator.pop(context)})),
         MainTabMenu.routeName: (context) => MainTabMenu(
               db: dbHelper,
               uid: _loggedUserId,
-              uname: _loggedUserName,
+              uname: _loggedName,
               logout: () => ({
                 setState(() => {_loggedUserId = -1}),
-                setState(() => {_loggedUserName = ""}),
+                setState(() => {_loggedName = ""}),
                 Navigator.pushReplacementNamed(context, LoginPage.routeName)
               }),
             ),
