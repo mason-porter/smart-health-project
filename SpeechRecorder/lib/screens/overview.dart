@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'scatterplot_chart.dart';
 
 class OverviewWidget extends StatelessWidget {
   final String username;
@@ -14,7 +15,22 @@ class OverviewWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text('This is $username\'s overview page.'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8.0, 15.0, 8.0, 8.0),
+              child: Text('This is $username\'s overview page.'),
+            ),
+            const ScatterPlot(
+              data: [
+                [1.0, 2.0],
+                [3.0, 4.0],
+                [5.0, 6.0],
+              ],
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: BottomAppBar(
         child: Container(

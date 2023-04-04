@@ -3,8 +3,6 @@ import 'screens/tab_menu.dart';
 import 'screens/login_page.dart';
 import 'screens/signup_page.dart';
 import 'services/database/database.dart';
-import 'screens/gyroscope_test.dart';
-import 'package:sqflite/sqflite.dart';
 
 void main() {
   runApp(const EntryRoot());
@@ -29,6 +27,7 @@ class EntryRootState0 extends State<EntryRoot> {
 
   int _loggedUserId = -1;
   String _loggedName = "";
+  bool _loggedAsAdmin = true;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +45,9 @@ class EntryRootState0 extends State<EntryRoot> {
                 },
             nameCallback: (val) => {
                   setState(() => {_loggedName = val})
+                },
+            adminCallback: (val) => {
+                  setState(() => {_loggedAsAdmin = val})
                 },
             gotoSignup: () =>
                 {Navigator.pushNamed(context, SignupPage.routeName)}),

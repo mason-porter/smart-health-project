@@ -4,6 +4,7 @@ import '../classes/user.dart';
 import '../services/database/database.dart';
 import 'dart:async';
 
+typedef void BoolCallback(bool val);
 typedef void IntCallback(int val);
 typedef void StringCallback(String val);
 typedef void VoidCallback();
@@ -13,12 +14,14 @@ class LoginPage extends StatelessWidget {
   final DatabaseHelper db;
   final IntCallback idCallback;
   final StringCallback nameCallback;
+  final BoolCallback adminCallback;
   final VoidCallback gotoSignup;
 
   LoginPage(
       {required this.db,
       required this.idCallback,
       required this.nameCallback,
+      required this.adminCallback,
       required this.gotoSignup,
       Key? key})
       : super(key: key);
@@ -50,6 +53,7 @@ class LoginPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
+                obscureText: true,
                 controller: passControl,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
