@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:record_with_play/screens/history_test_list.dart';
 import 'package:record_with_play/screens/overview.dart';
+import 'package:record_with_play/screens/test_start.dart';
 import '../services/database/database.dart';
 import 'gyroscope_test.dart';
 
@@ -41,7 +42,7 @@ class MainTabMenu extends StatelessWidget {
             children: [
               HistoryTestList(db: db, uid: uid),
               OverviewWidget(username: uname, logout: logout),
-              GyroScopeScreen(db: db, uid: uid, username: uname),
+              TestStartScreen(db: db, uid: uid, username: uname),
             ],
           ),
         ),

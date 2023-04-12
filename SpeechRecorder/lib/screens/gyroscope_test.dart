@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:record_with_play/screens/test_ready_right.dart';
 import 'package:record_with_play/screens/test_score.dart';
 import 'package:intl/intl.dart';
 import 'package:sensors_plus/sensors_plus.dart';
@@ -15,8 +16,17 @@ class GyroScopeScreen extends StatefulWidget {
   final DatabaseHelper db;
   final int uid;
   final String username;
+  final String testType;
+  final double displacement;
+  final String leg;
   const GyroScopeScreen(
-      {required this.db, required this.uid, required this.username, Key? key})
+      {required this.db,
+      required this.uid,
+      required this.username,
+      required this.testType,
+      required this.displacement,
+      required this.leg,
+      Key? key})
       : super(key: key);
 
   @override
@@ -25,7 +35,7 @@ class GyroScopeScreen extends StatefulWidget {
 
 class _GyroScopeScreenState extends State<GyroScopeScreen> {
   double x = 0, y = 0, z = 0;
-  double displacement = 0;
+  late double _displacement = widget.displacement;
   Timer? timer;
   int count = 0;
   double initx = 0, inity = 0, initz = 0;
@@ -47,6 +57,7 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
     customizeStatusAndNavigationBar();
     player = AudioPlayer();
     super.initState();
+    _startRecording();
   }
 
   void sendResultsToDatabase(double disp) async {
@@ -64,14 +75,14 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
   }
 
   Future<void> _startRecording() async {
-    var file = File('assets/countdown.mp3');
+    var file = File('countdown.mp3');
     bool exists = await file.exists();
     if (exists) {
       print('File exists!');
     } else {
       print('File not found!');
     }
-    await player.play('assets/countdown.mp3', isLocal: true);
+    await player.play('countdown.mp3', isLocal: true);
     setState(() {
       _isRecording = true;
       _countdown = 5;
@@ -99,23 +110,36 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
 
   void _stopRecording() {
     _isRecording = false;
-    sendResultsToDatabase(displacement);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TestResultScreen(score: displacement),
-      ),
-    );
+    sendResultsToDatabase(_displacement);
+    if (widget.leg == 'right') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TestResultScreen(score: _displacement),
+        ),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TestReadyRightScreen(
+              db: widget.db,
+              uid: widget.uid,
+              username: widget.username,
+              testType: widget.testType,
+              displacement: _displacement),
+        ),
+      );
+    }
   }
 
   void _calculateDisplacement() {
-    displacement = 0;
     gyroscopeEvents.listen((GyroscopeEvent event) {
       initx = _gyroscopeEvents[0].x;
       inity = _gyroscopeEvents[0].y;
       initz = _gyroscopeEvents[0].z;
       for (var i = 1; i < _gyroscopeEvents.length; i++) {
-        displacement = displacement +
+        _displacement = _displacement +
             sqrt(pow(_gyroscopeEvents[i].x - initx, 2) +
                     pow(_gyroscopeEvents[i].y - inity, 2) +
                     pow(_gyroscopeEvents[i].z - initz, 2))
@@ -135,13 +159,13 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            ElevatedButton(
-              onPressed: _startRecording,
-              child: const Text('Start Recording'),
+            const Text(
+              'Hold for 5 seconds:',
+              style: TextStyle(fontSize: 40),
             ),
             Text(
               '$_countdown',
-              style: const TextStyle(fontSize: 48),
+              style: const TextStyle(fontSize: 55),
             ),
           ],
         ),
