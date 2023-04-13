@@ -139,13 +139,13 @@ class DatabaseHelper {
 
   Future<int> saveTest(Test test) async {
     var dbClient = await db;
-    debugPrint("NEW: " + test.toMap().toString());
+    // debugPrint("NEW: " + test.toMap().toString());
 
     int ret = await dbClient.insert(tableTests, test.toMap());
     List<Test> tests = await getTests();
-    for (int i = 0; i < tests.length; i++) {
-      debugPrint(tests[i].toString());
-    }
+    // for (int i = 0; i < tests.length; i++) {
+    //   debugPrint(tests[i].toString());
+    // }
     return ret;
   }
 
@@ -193,10 +193,10 @@ class DatabaseHelper {
     );
 
     List<Test> tests = [];
-    debugPrint("Tests from Owner " +
+    /* debugPrint("Tests from Owner " +
         oid.toString() +
         " | Hits: " +
-        result.length.toString());
+        result.length.toString()); */
 
     if (result.isNotEmpty) {
       for (int i = 0; i < result.length; i++) {

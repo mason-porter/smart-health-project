@@ -6,7 +6,7 @@ import 'dart:async';
 
 typedef void VoidCallback();
 
-class SignupPage extends StatelessWidget {
+class SignupPage extends StatefulWidget {
   static const routeName = '/signup';
   final DatabaseHelper db;
   final VoidCallback gotoLogin;
@@ -14,10 +14,17 @@ class SignupPage extends StatelessWidget {
   SignupPage({required this.db, required this.gotoLogin, Key? key})
       : super(key: key);
 
+  @override
+  _SignupPageState createState() => _SignupPageState();
+}
+
+class _SignupPageState extends State<SignupPage> {
   final nameControl = TextEditingController();
   final unameControl = TextEditingController();
   final passControl = TextEditingController();
   final passcControl = TextEditingController();
+
+  bool _adminCheck = false;
 
   @override
   Widget build(BuildContext context) {
@@ -73,10 +80,22 @@ class SignupPage extends StatelessWidget {
                 ),
               ),
             ),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              const Text('Admin?'),
+              Checkbox(
+                value: _adminCheck,
+                onChanged: (bool? value) {
+                  setState(() {
+                    _adminCheck = value ?? false;
+                  });
+                },
+              ),
+            ]),
             ElevatedButton(
               child: const Text('Sign Up'),
               onPressed: () async {
-                List<User> users = await db.getUsersByUname(unameControl.text);
+                List<User> users =
+                    await widget.db.getUsersByUname(unameControl.text);
                 if (nameControl.text == "") {
                   showDialog(
                     context: context,
@@ -132,9 +151,9 @@ class SignupPage extends StatelessWidget {
                   newUser.name = nameControl.text;
                   newUser.uname = unameControl.text;
                   newUser.password = passControl.text;
-                  newUser.admin = false;
-                  int id = await db.saveUser(newUser);
-                  gotoLogin();
+                  newUser.admin = _adminCheck;
+                  int id = await widget.db.saveUser(newUser);
+                  widget.gotoLogin();
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {

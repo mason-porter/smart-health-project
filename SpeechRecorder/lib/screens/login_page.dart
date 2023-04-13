@@ -98,6 +98,7 @@ class LoginPage extends StatelessWidget {
                         } else {
                           idCallback(toLogin.id ?? -1);
                           nameCallback(toLogin.name ?? '<null>');
+                          adminCallback(toLogin.admin ?? false);
                           Navigator.pushReplacementNamed(
                               context, MainTabMenu.routeName);
                         }

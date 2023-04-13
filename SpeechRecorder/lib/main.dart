@@ -27,7 +27,7 @@ class EntryRootState0 extends State<EntryRoot> {
 
   int _loggedUserId = -1;
   String _loggedName = "";
-  bool _loggedAsAdmin = true;
+  bool _loggedAsAdmin = false;
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +57,11 @@ class EntryRootState0 extends State<EntryRoot> {
               db: dbHelper,
               uid: _loggedUserId,
               uname: _loggedName,
+              admin: _loggedAsAdmin,
               logout: () => ({
                 setState(() => {_loggedUserId = -1}),
                 setState(() => {_loggedName = ""}),
+                setState(() => {_loggedAsAdmin = false}),
                 Navigator.pushReplacementNamed(context, LoginPage.routeName)
               }),
             ),
