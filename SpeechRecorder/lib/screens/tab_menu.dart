@@ -10,12 +10,14 @@ class MainTabMenu extends StatelessWidget {
   static const routeName = '/main';
   final DatabaseHelper db;
   final String uname;
+  final bool admin;
   final int uid;
   final VoidCallback logout;
   const MainTabMenu(
       {required this.db,
       required this.uid,
       required this.uname,
+      required this.admin,
       required this.logout,
       Key? key})
       : super(key: key);
@@ -40,7 +42,8 @@ class MainTabMenu extends StatelessWidget {
           body: TabBarView(
             children: [
               HistoryTestList(db: db, uid: uid),
-              OverviewWidget(username: uname, logout: logout),
+              OverviewWidget(
+                  db: db, username: uname, admin: admin, logout: logout),
               GyroScopeScreen(db: db, uid: uid, username: uname),
             ],
           ),

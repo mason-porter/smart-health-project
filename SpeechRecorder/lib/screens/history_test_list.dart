@@ -61,7 +61,7 @@ class _HistoryTestListState extends State<HistoryTestList> {
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             Test newTest = Test();
-            newTest.name = "";
+            newTest.name = "Generated Test by UID " + widget.uid.toString();
             newTest.oId = widget.uid;
             newTest.date = DateTime.now().millisecondsSinceEpoch ~/ 1000;
             Random rn = Random(newTest.date);

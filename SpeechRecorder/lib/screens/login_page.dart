@@ -4,23 +4,30 @@ import '../classes/user.dart';
 import '../services/database/database.dart';
 import 'dart:async';
 
+typedef void BoolCallback(bool val);
 typedef void IntCallback(int val);
 typedef void StringCallback(String val);
+typedef void VoidCallback();
 
 class LoginPage extends StatelessWidget {
   static const routeName = '/login';
   final DatabaseHelper db;
   final IntCallback idCallback;
   final StringCallback nameCallback;
+  final BoolCallback adminCallback;
+  final VoidCallback gotoSignup;
 
   LoginPage(
       {required this.db,
       required this.idCallback,
       required this.nameCallback,
+      required this.adminCallback,
+      required this.gotoSignup,
       Key? key})
       : super(key: key);
 
   final unameControl = TextEditingController();
+  final passControl = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -33,47 +40,83 @@ class LoginPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text('Please log in'),
-            const SizedBox(height: 16),
-            TextField(
-              controller: unameControl,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Username',
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8.0, 15.0, 8.0, 8.0),
+              child: TextField(
+                controller: unameControl,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Username',
+                ),
               ),
             ),
-            ElevatedButton(
-              onPressed: () async {
-                // simulate successful login
-                int id = await db.searchIdByUser(unameControl.text);
-                if (id != -1) {
-                  String uname = await db.searchUserById(id);
-                  if (uname != "XX2X") {
-                    idCallback(id);
-                    nameCallback(uname);
-                    Navigator.pushReplacementNamed(
-                        context, MainTabMenu.routeName);
-                  }
-                }
-              },
-              child: const Text('Log in'),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                obscureText: true,
+                controller: passControl,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Password',
+                ),
+              ),
             ),
-            ElevatedButton(
-              child: const Text('Create User'),
-              onPressed: () async {
-                User newUser = User();
-                newUser.name = unameControl.text;
-                int id = await db.saveUser(newUser);
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      // Retrieve the text the that user has entered by using the
-                      // TextEditingController.
-                      content: Text('Your username is: ' + unameControl.text),
-                    );
-                  },
-                );
-              },
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      // simulate successful login
+                      List<User> users =
+                          await db.getUsersByUname(unameControl.text);
+                      if (users.isEmpty) {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Error'),
+                              content: Text("User '" +
+                                  unameControl.text +
+                                  "' is not found!"),
+                            );
+                          },
+                        );
+                      } else {
+                        User toLogin = users[0];
+                        if (toLogin.password != passControl.text) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return const AlertDialog(
+                                title: Text('Error'),
+                                content: Text("Password is incorrect"),
+                              );
+                            },
+                          );
+                        } else {
+                          idCallback(toLogin.id ?? -1);
+                          nameCallback(toLogin.name ?? '<null>');
+                          adminCallback(toLogin.admin ?? false);
+                          Navigator.pushReplacementNamed(
+                              context, MainTabMenu.routeName);
+                        }
+                      }
+                    },
+                    child: const Text('Log in'),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    child: const Text('Create Account'),
+                    onPressed: () async {
+                      gotoSignup();
+                    },
+                  ),
+                ),
+              ],
             ),
             ElevatedButton(
                 child: const Text('DEBUG Show Users'),
