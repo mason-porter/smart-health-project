@@ -66,6 +66,7 @@ class _TestReadyRightScreenState extends State<TestReadyRightScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text("Balance Test"),
         backgroundColor: Colors.blueAccent,
       ),
