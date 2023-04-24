@@ -14,12 +14,14 @@ import '../classes/test.dart';
 class TestReadyBothScreen extends StatefulWidget {
   static const routeName = '/readyboth';
   final DatabaseHelper db;
+  Test test;
   final int uid;
   final String username;
   final String testType;
   final double displacement;
-  const TestReadyBothScreen(
+  TestReadyBothScreen(
       {required this.db,
+      required this.test,
       required this.uid,
       required this.username,
       required this.testType,
@@ -53,6 +55,7 @@ class _TestReadyBothScreenState extends State<TestReadyBothScreen> {
       MaterialPageRoute(
         builder: (context) => GyroScopeScreen(
             db: widget.db,
+            test: widget.test,
             uid: widget.uid,
             username: widget.username,
             testType: widget.testType,

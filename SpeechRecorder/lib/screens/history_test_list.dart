@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../services/database/database.dart';
 import '../classes/test.dart';
+import '../classes/user.dart';
 import 'dart:async';
 import 'dart:math';
+import './test_view.dart';
 
 class HistoryTestList extends StatefulWidget {
   final DatabaseHelper db;
@@ -43,6 +45,7 @@ class _HistoryTestListState extends State<HistoryTestList> {
           padding: EdgeInsets.zero,
           itemCount: (tests?.length ?? 0),
           itemBuilder: (BuildContext context, int index) {
+            Test? test = tests?[index];
             Map<String, dynamic>? map = tests?[index].toMap();
             String ret = "";
             if (map != null) {
@@ -51,11 +54,20 @@ class _HistoryTestListState extends State<HistoryTestList> {
                   ") | " +
                   map["name"] +
                   " | Score: " +
-                  map["score"].toString();
+                  map["score_final"].toString();
             }
             return ListTile(
-              title: Text(ret),
-            );
+                title: Text(ret),
+                onTap: () => {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => TestView(
+                                db: widget.db,
+                                test: test,
+                                refreshCallback: () => {getTests()}),
+                          )),
+                    });
           },
         ),
         floatingActionButton: FloatingActionButton(
@@ -65,7 +77,14 @@ class _HistoryTestListState extends State<HistoryTestList> {
             newTest.oId = widget.uid;
             newTest.date = DateTime.now().millisecondsSinceEpoch ~/ 1000;
             Random rn = Random(newTest.date);
-            newTest.score = rn.nextInt(101);
+            int nl = rn.nextInt(101);
+            int nr = rn.nextInt(101);
+            int nb = rn.nextInt(101);
+            newTest.scoreL = nl;
+            newTest.scoreR = nr;
+            newTest.scoreB = nb;
+            newTest.scoreS = (nl + nr) ~/ 2;
+            newTest.scoreFinal = ((nl + nr) + (nb * 2)) ~/ 4;
             int id = await widget.db.saveTest(newTest);
             getTests();
           },

@@ -14,11 +14,14 @@ import '../classes/test.dart';
 class TestReadyLeftScreen extends StatefulWidget {
   static const routeName = '/readyleft';
   final DatabaseHelper db;
+  Test test;
   final int uid;
   final String username;
   final String testType;
-  const TestReadyLeftScreen(
+
+  TestReadyLeftScreen(
       {required this.db,
+      required this.test,
       required this.uid,
       required this.username,
       required this.testType,
@@ -50,6 +53,7 @@ class _TestReadyLeftScreenState extends State<TestReadyLeftScreen> {
       MaterialPageRoute(
         builder: (context) => GyroScopeScreen(
             db: widget.db,
+            test: widget.test,
             uid: widget.uid,
             username: widget.username,
             testType: widget.testType,
