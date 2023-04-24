@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'package:just_audio/just_audio.dart';
+import 'package:record_with_play/screens/test_ready_both.dart';
 import 'package:record_with_play/screens/test_ready_right.dart';
 import 'package:record_with_play/screens/test_score.dart';
 import 'package:intl/intl.dart';
@@ -108,18 +109,30 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
   void _stopRecording() {
     _isRecording = false;
     sendResultsToDatabase(_displacement);
-    if (widget.leg == 'right') {
+    if (widget.leg == 'both') {
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => TestResultScreen(score: _displacement),
         ),
       );
-    } else {
+    } else if (widget.leg == 'left') {
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => TestReadyRightScreen(
+              db: widget.db,
+              uid: widget.uid,
+              username: widget.username,
+              testType: widget.testType,
+              displacement: _displacement),
+        ),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TestReadyBothScreen(
               db: widget.db,
               uid: widget.uid,
               username: widget.username,
@@ -159,7 +172,7 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
           children: <Widget>[
             const Text(
               'Hold for 5 seconds:',
-              style: TextStyle(fontSize: 40),
+              style: TextStyle(fontSize: 35),
             ),
             Text(
               '$_countdown',
