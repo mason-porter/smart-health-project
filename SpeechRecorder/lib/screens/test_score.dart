@@ -9,6 +9,7 @@ class TestResultScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: const Text('Test Result'),
         ),
         body: Center(
@@ -30,6 +31,12 @@ class TestResultScreen extends StatelessWidget {
                 style: const TextStyle(
                     fontSize: 24.0, fontWeight: FontWeight.bold),
               ),
+              ElevatedButton(
+                child: const Text('Finish Test'),
+                onPressed: () {
+                  Navigator.popUntil(context, (route) => route.isFirst);
+                },
+              )
             ],
           ),
         ));

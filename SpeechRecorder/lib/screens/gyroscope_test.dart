@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
+import 'package:just_audio/just_audio.dart';
+import 'package:record_with_play/screens/test_ready_right.dart';
 import 'package:record_with_play/screens/test_score.dart';
 import 'package:intl/intl.dart';
 import 'package:sensors_plus/sensors_plus.dart';
@@ -13,8 +16,17 @@ class GyroScopeScreen extends StatefulWidget {
   final DatabaseHelper db;
   final int uid;
   final String username;
+  final String testType;
+  final double displacement;
+  final String leg;
   const GyroScopeScreen(
-      {required this.db, required this.uid, required this.username, Key? key})
+      {required this.db,
+      required this.uid,
+      required this.username,
+      required this.testType,
+      required this.displacement,
+      required this.leg,
+      Key? key})
       : super(key: key);
 
   @override
@@ -23,12 +35,13 @@ class GyroScopeScreen extends StatefulWidget {
 
 class _GyroScopeScreenState extends State<GyroScopeScreen> {
   double x = 0, y = 0, z = 0;
-  double displacement = 0;
+  late double _displacement = widget.displacement;
   Timer? timer;
   int count = 0;
   double initx = 0, inity = 0, initz = 0;
   List<GyroscopeEvent> _gyroscopeEvents = [];
   bool _isRecording = false;
+  int _countdown = 5;
   customizeStatusAndNavigationBar() {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         systemNavigationBarColor: Colors.white,
@@ -41,6 +54,7 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
   void initState() {
     customizeStatusAndNavigationBar();
     super.initState();
+    _startRecording();
   }
 
   void sendResultsToDatabase(double disp) async {
@@ -57,39 +71,72 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
     int id = await widget.db.saveTest(newTest);
   }
 
-  void _startRecording() {
-    _isRecording = true;
-    _gyroscopeEvents.clear();
-    gyroscopeEvents.listen((GyroscopeEvent event) {
-      if (_isRecording) {
-        setState(() {
-          _gyroscopeEvents.add(event);
-        });
-      }
+  Future<void> _startRecording() async {
+    final player = AudioPlayer();
+
+    setState(() {
+      _isRecording = true;
+      _countdown = 5;
+      _gyroscopeEvents.clear();
     });
-    Future.delayed(const Duration(seconds: 10), () => _stopRecording());
+    int x;
+    for (x = 5; x > 0; x--) {
+      await player.setAsset('assets/$x.mp3');
+      await player.play();
+      await player.playerStateStream.firstWhere(
+          (state) => state.processingState == ProcessingState.completed);
+
+      setState(() {
+        _countdown--;
+      });
+
+      if (_countdown == 0) {
+        _stopRecording();
+      }
+      gyroscopeEvents.listen((GyroscopeEvent event) {
+        if (_isRecording) {
+          setState(() {
+            _gyroscopeEvents.add(event);
+          });
+        }
+      });
+    }
+    ;
     _calculateDisplacement();
   }
 
   void _stopRecording() {
     _isRecording = false;
-    sendResultsToDatabase(displacement);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TestResultScreen(score: displacement),
-      ),
-    );
+    sendResultsToDatabase(_displacement);
+    if (widget.leg == 'right') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TestResultScreen(score: _displacement),
+        ),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TestReadyRightScreen(
+              db: widget.db,
+              uid: widget.uid,
+              username: widget.username,
+              testType: widget.testType,
+              displacement: _displacement),
+        ),
+      );
+    }
   }
 
   void _calculateDisplacement() {
     gyroscopeEvents.listen((GyroscopeEvent event) {
-      displacement = 0;
       initx = _gyroscopeEvents[0].x;
       inity = _gyroscopeEvents[0].y;
       initz = _gyroscopeEvents[0].z;
       for (var i = 1; i < _gyroscopeEvents.length; i++) {
-        displacement = displacement +
+        _displacement = _displacement +
             sqrt(pow(_gyroscopeEvents[i].x - initx, 2) +
                     pow(_gyroscopeEvents[i].y - inity, 2) +
                     pow(_gyroscopeEvents[i].z - initz, 2))
@@ -102,6 +149,7 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text("Balance Test"),
         backgroundColor: Colors.blueAccent,
       ),
@@ -109,14 +157,13 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            ElevatedButton(
-              onPressed: _startRecording,
-              child: const Text('Start Recording'),
+            const Text(
+              'Hold for 5 seconds:',
+              style: TextStyle(fontSize: 40),
             ),
-            const SizedBox(height: 16.0),
             Text(
-              'Score: $displacement',
-              style: const TextStyle(fontSize: 24.0),
+              '$_countdown',
+              style: const TextStyle(fontSize: 55),
             ),
           ],
         ),
