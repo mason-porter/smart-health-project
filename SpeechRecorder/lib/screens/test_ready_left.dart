@@ -71,7 +71,7 @@ class _TestReadyLeftScreenState extends State<TestReadyLeftScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Padding(
-              padding: EdgeInsets.all(10.0),
+              padding: EdgeInsets.all(25.0),
               child: Text(
                 'Balance on your left foot:',
                 style: TextStyle(
@@ -81,38 +81,38 @@ class _TestReadyLeftScreenState extends State<TestReadyLeftScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(25.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const <Widget>[
                   Text(
                     '• Step 1: Hold your device in your dominant hand',
-                    style: TextStyle(fontSize: 15.0),
+                    style: TextStyle(fontSize: 18.0),
                   ),
                   Text(
                     '• Step 2: Balance on your left foot as shown below',
-                    style: TextStyle(fontSize: 15.0),
+                    style: TextStyle(fontSize: 18.0),
                   ),
                   Text(
                     '• Step 3: Close your eyes immediately after starting the test',
-                    style: TextStyle(fontSize: 15.0),
+                    style: TextStyle(fontSize: 18.0),
                   ),
                 ],
               ),
             ),
+            ElevatedButton(
+              onPressed: goToRecord,
+              child: const Text('Start Test'),
+            ),
             Expanded(
               child: FractionallySizedBox(
-                widthFactor: 0.6, // Set the width factor to 75%
+                widthFactor: 0.5,
                 heightFactor: 0.8,
                 child: Image.asset(
                   'assets/left.jpg',
                   fit: BoxFit.cover,
                 ),
               ),
-            ),
-            ElevatedButton(
-              onPressed: goToRecord,
-              child: const Text('Start Test'),
             ),
           ],
         ),
