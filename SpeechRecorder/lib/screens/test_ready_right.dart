@@ -94,7 +94,11 @@ class _TestReadyRightScreenState extends State<TestReadyRightScreen> {
                     style: TextStyle(fontSize: 15.0),
                   ),
                   Text(
-                    '• Step 2: Balance on your right foot',
+                    '• Step 2: Balance on your right foot as shown below',
+                    style: TextStyle(fontSize: 15.0),
+                  ),
+                  Text(
+                    '• Step 3: Close your eyes immediately after starting the test',
                     style: TextStyle(fontSize: 15.0),
                   ),
                 ],
@@ -104,8 +108,8 @@ class _TestReadyRightScreenState extends State<TestReadyRightScreen> {
               child: FractionallySizedBox(
                 widthFactor: 0.6, // Set the width factor to 75%
                 heightFactor: 0.8,
-                child: Image.network(
-                  'https://i.ibb.co/LnL9Sqx/image-1.jpg',
+                child: Image.asset(
+                  'assets/right.jpg',
                   fit: BoxFit.cover,
                 ),
               ),

@@ -90,7 +90,11 @@ class _TestReadyLeftScreenState extends State<TestReadyLeftScreen> {
                     style: TextStyle(fontSize: 15.0),
                   ),
                   Text(
-                    '• Step 2: Balance on your left foot',
+                    '• Step 2: Balance on your left foot as shown below',
+                    style: TextStyle(fontSize: 15.0),
+                  ),
+                  Text(
+                    '• Step 3: Close your eyes immediately after starting the test',
                     style: TextStyle(fontSize: 15.0),
                   ),
                 ],
@@ -100,8 +104,8 @@ class _TestReadyLeftScreenState extends State<TestReadyLeftScreen> {
               child: FractionallySizedBox(
                 widthFactor: 0.6, // Set the width factor to 75%
                 heightFactor: 0.8,
-                child: Image.network(
-                  'https://www.24hourfitness.com/images/community/blogs/2015/april/Balance_Forward-Bound-Hold.jpg',
+                child: Image.asset(
+                  'assets/left.jpg',
                   fit: BoxFit.cover,
                 ),
               ),

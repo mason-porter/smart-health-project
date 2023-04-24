@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:record_with_play/screens/test_ready_right.dart';
 import 'package:record_with_play/screens/test_score.dart';
 import 'package:intl/intl.dart';
@@ -42,8 +42,6 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
   List<GyroscopeEvent> _gyroscopeEvents = [];
   bool _isRecording = false;
   int _countdown = 5;
-  late Timer _timer;
-  late AudioPlayer player;
   customizeStatusAndNavigationBar() {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         systemNavigationBarColor: Colors.white,
@@ -55,7 +53,6 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
   @override
   void initState() {
     customizeStatusAndNavigationBar();
-    player = AudioPlayer();
     super.initState();
     _startRecording();
   }
@@ -75,26 +72,25 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
   }
 
   Future<void> _startRecording() async {
-    var file = File('countdown.mp3');
-    bool exists = await file.exists();
-    if (exists) {
-      print('File exists!');
-    } else {
-      print('File not found!');
-    }
-    await player.play('countdown.mp3', isLocal: true);
+    final player = AudioPlayer();
+
     setState(() {
       _isRecording = true;
       _countdown = 5;
       _gyroscopeEvents.clear();
     });
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    int x;
+    for (x = 5; x > 0; x--) {
+      await player.setAsset('assets/$x.mp3');
+      await player.play();
+      await player.playerStateStream.firstWhere(
+          (state) => state.processingState == ProcessingState.completed);
+
       setState(() {
         _countdown--;
       });
 
       if (_countdown == 0) {
-        _timer.cancel();
         _stopRecording();
       }
       gyroscopeEvents.listen((GyroscopeEvent event) {
@@ -104,7 +100,8 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
           });
         }
       });
-    });
+    }
+    ;
     _calculateDisplacement();
   }
 
