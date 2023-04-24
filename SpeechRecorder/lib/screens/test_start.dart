@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:record_with_play/screens/test_ready_left.dart';
-
+import '../classes/test.dart';
 import '../services/database/database.dart';
 
 class TestStartScreen extends StatefulWidget {
@@ -21,12 +21,15 @@ class TestStartScreen extends StatefulWidget {
 }
 
 class _TestStartScreenState extends State<TestStartScreen> {
+  Test ipt = Test();
+
   void baselineTest() {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => TestReadyLeftScreen(
           db: widget.db,
+          test: ipt,
           uid: widget.uid,
           username: widget.username,
           testType: 'Baseline',
@@ -41,6 +44,7 @@ class _TestStartScreenState extends State<TestStartScreen> {
       MaterialPageRoute(
         builder: (context) => TestReadyLeftScreen(
           db: widget.db,
+          test: ipt,
           uid: widget.uid,
           username: widget.username,
           testType: 'Diagnostic',

@@ -25,12 +25,12 @@ class _ScatterPlotState extends State<ScatterPlot> {
     List<List<num>> newData = [];
     List<Test> tests = await widget.db.getTests();
     for (Test test in tests) {
-      newData.add([test.oId ?? -1, test.score ?? 0]);
+      newData.add([test.scoreS ?? 0, test.scoreB ?? 0]);
     }
     setState(() {
       data = newData;
     });
-    debugPrint(data.toString());
+    //debugPrint(data.toString());
   }
 
   @override
@@ -57,22 +57,16 @@ class _ScatterPlotState extends State<ScatterPlot> {
                   containLabel: true,
                 },
                 xAxis: {},
-                yAxis: { name: 'score'},
+                yAxis: { name: 'Double-Leg Score'},
                 series: [{
                   type: 'scatter',
                   data: ${data.toString()},
-                  markPoint: {
-                    data: [
-                      {type: 'max', name: 'Max'},
-                      {type: 'min', name: 'Min'}
-                    ]
-                  }
                 }]
               }
               ''',
           ),
         ),
-        const Text('User ID')
+        const Text('Single-Leg Score')
       ],
     ));
   }
