@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:record_with_play/services/database/database.dart';
+import 'scatterplot_chart.dart';
 
 class OverviewWidget extends StatelessWidget {
+  final DatabaseHelper db;
   final String username;
   final VoidCallback logout;
+  final bool admin;
 
   const OverviewWidget({
     Key? key,
+    required this.db,
     required this.username,
+    required this.admin,
     required this.logout,
   }) : super(key: key);
 
@@ -14,7 +20,21 @@ class OverviewWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text('This is $username\'s overview page.'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8.0, 15.0, 8.0, 8.0),
+              child: Text('This is $username\'s overview page.'),
+            ),
+            Visibility(
+              visible: admin,
+              child: ScatterPlot(
+                db: db,
+              ),
+            )
+          ],
+        ),
       ),
       bottomNavigationBar: BottomAppBar(
         child: Container(
