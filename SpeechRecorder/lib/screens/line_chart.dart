@@ -70,7 +70,7 @@ class _LineChartWidgetState extends State<LineChartWidget> {
                           }
                         },
                       },},
-                yAxis: { name: 'score'},
+                yAxis: { name: 'Score'},
                 series: [{
                   type: 'line',
                   data: ${data.toString()},
