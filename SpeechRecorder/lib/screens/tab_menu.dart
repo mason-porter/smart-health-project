@@ -42,9 +42,13 @@ class MainTabMenu extends StatelessWidget {
           ),
           body: TabBarView(
             children: [
-              HistoryTestList(db: db, uid: uid),
+              HistoryTestList(db: db, uid: uid, isAdmin: admin),
               OverviewWidget(
-                  db: db, uid: uid, username: uname, admin: admin, logout: logout),
+                  db: db,
+                  uid: uid,
+                  username: uname,
+                  admin: admin,
+                  logout: logout),
               TestStartScreen(db: db, uid: uid, username: uname),
             ],
           ),

@@ -39,8 +39,6 @@ class _LineChartWidgetState extends State<LineChartWidget> {
     debugPrint(widget.uid.toString());
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Center(

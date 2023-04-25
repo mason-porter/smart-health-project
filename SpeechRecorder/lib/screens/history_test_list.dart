@@ -8,11 +8,13 @@ import './test_view.dart';
 
 class HistoryTestList extends StatefulWidget {
   final DatabaseHelper db;
+  final bool isAdmin;
   final int uid;
 
   HistoryTestList({
     required this.db,
     required this.uid,
+    required this.isAdmin,
     Key? key,
   }) : super(key: key);
 
@@ -31,7 +33,12 @@ class _HistoryTestListState extends State<HistoryTestList> {
   }
 
   void getTests() async {
-    List<Test>? newTests = await widget.db.getTestsByOwnerId(widget.uid);
+    List<Test>? newTests;
+    if (widget.isAdmin == false) {
+      newTests = await widget.db.getTestsByOwnerId(widget.uid);
+    } else {
+      newTests = await widget.db.getTests();
+    }
     setState(() {
       tests = newTests;
     });
