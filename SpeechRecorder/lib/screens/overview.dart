@@ -31,6 +31,7 @@ class OverviewWidget extends StatelessWidget {
               child: Text('This is $username\'s overview page.'),
             ),
             Expanded(
+                child: Scrollbar(
               child: ListView(
                 children: [
                   LineChartWidget(
@@ -45,7 +46,7 @@ class OverviewWidget extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
+            )),
           ],
         ),
       ),

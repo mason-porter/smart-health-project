@@ -41,7 +41,7 @@ class _ScatterPlotState extends State<ScatterPlot> {
       children: [
         SizedBox(
           // color: Colors.grey[200], // for debugging purposes
-          width: 400,
+          width: 350,
           height: 300,
           child: Echarts(
             option: '''

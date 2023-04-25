@@ -6,6 +6,7 @@ import 'package:record_with_play/screens/test_ready_both.dart';
 import 'package:record_with_play/screens/test_ready_right.dart';
 import 'package:record_with_play/screens/test_score.dart';
 import 'package:intl/intl.dart';
+import 'package:record_with_play/screens/test_score_diag.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -125,13 +126,26 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
       widget.test.scoreFinal =
           ((widget.test.scoreS ?? 0) + (widget.test.scoreB ?? 0)) ~/ 2;
       sendResultsToDatabase();
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) =>
-              TestResultScreen(score: (widget.test.scoreFinal ?? 0)),
-        ),
-      );
+      if (widget.testType == 'Baseline') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                TestResultScreen(score: (widget.test.scoreFinal ?? 0)),
+          ),
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TestResultDScreen(
+              score: (widget.test.scoreFinal ?? 0),
+              db: widget.db,
+              uid: widget.uid,
+            ),
+          ),
+        );
+      }
     } else if (widget.leg == 'left') {
       widget.test.scoreL = calcScoreFromDisp(_displacement);
       Navigator.push(
