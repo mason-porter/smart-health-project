@@ -46,7 +46,7 @@ class _LineChartWidgetState extends State<LineChartWidget> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          width: 400,
+          width: 320,
           height: 300,
           child: Echarts(
             option: '''
@@ -61,8 +61,16 @@ class _LineChartWidgetState extends State<LineChartWidget> {
                   width: '350',
                   containLabel: true,
                 },
-                xAxis: {},
-                yAxis: { name: 'score'},
+                xAxis: {axisLabel: {
+                        formatter: function(value, index) {
+                          if (value % 1 === 0) { // only show whole number ticks
+                           return value;
+                          } else {
+                            return '';
+                          }
+                        },
+                      },},
+                yAxis: { name: 'Score'},
                 series: [{
                   type: 'line',
                   data: ${data.toString()},
