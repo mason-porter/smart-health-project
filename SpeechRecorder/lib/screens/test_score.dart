@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TestResultScreen extends StatelessWidget {
-  final double score;
+  final int score;
 
   const TestResultScreen({super.key, required this.score});
 

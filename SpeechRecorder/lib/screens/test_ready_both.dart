@@ -11,15 +11,15 @@ import 'package:flutter/services.dart';
 import '../services/database/database.dart';
 import '../classes/test.dart';
 
-class TestReadyRightScreen extends StatefulWidget {
-  static const routeName = '/readyright';
+class TestReadyBothScreen extends StatefulWidget {
+  static const routeName = '/readyboth';
   final DatabaseHelper db;
   Test test;
   final int uid;
   final String username;
   final String testType;
   final double displacement;
-  TestReadyRightScreen(
+  TestReadyBothScreen(
       {required this.db,
       required this.test,
       required this.uid,
@@ -30,10 +30,10 @@ class TestReadyRightScreen extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<TestReadyRightScreen> createState() => _TestReadyRightScreenState();
+  State<TestReadyBothScreen> createState() => _TestReadyBothScreenState();
 }
 
-class _TestReadyRightScreenState extends State<TestReadyRightScreen> {
+class _TestReadyBothScreenState extends State<TestReadyBothScreen> {
   late double _displacement = widget.displacement;
   customizeStatusAndNavigationBar() {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -60,7 +60,7 @@ class _TestReadyRightScreenState extends State<TestReadyRightScreen> {
             username: widget.username,
             testType: widget.testType,
             displacement: _displacement,
-            leg: 'right'),
+            leg: 'both'),
       ),
     );
   }
@@ -78,9 +78,9 @@ class _TestReadyRightScreenState extends State<TestReadyRightScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Padding(
-              padding: EdgeInsets.all(25.0),
+              padding: EdgeInsets.all(20.0),
               child: Text(
-                'Balance on your right foot:',
+                'Balance on both feet:',
                 style: TextStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,
@@ -97,7 +97,7 @@ class _TestReadyRightScreenState extends State<TestReadyRightScreen> {
                     style: TextStyle(fontSize: 18.0),
                   ),
                   Text(
-                    '• Step 2: Balance on your right foot as shown below',
+                    '• Step 2: Balance on both feet as shown below',
                     style: TextStyle(fontSize: 18.0),
                   ),
                   Text(
@@ -116,7 +116,7 @@ class _TestReadyRightScreenState extends State<TestReadyRightScreen> {
                 widthFactor: 0.5,
                 heightFactor: 0.8,
                 child: Image.asset(
-                  'assets/right.jpg',
+                  'assets/both.png',
                   fit: BoxFit.cover,
                 ),
               ),

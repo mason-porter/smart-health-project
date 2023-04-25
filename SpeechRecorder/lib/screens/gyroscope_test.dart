@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'package:just_audio/just_audio.dart';
+import 'package:record_with_play/screens/test_ready_both.dart';
 import 'package:record_with_play/screens/test_ready_right.dart';
 import 'package:record_with_play/screens/test_score.dart';
 import 'package:intl/intl.dart';
@@ -19,8 +20,12 @@ class GyroScopeScreen extends StatefulWidget {
   final String testType;
   final double displacement;
   final String leg;
-  const GyroScopeScreen(
+
+  Test test;
+
+  GyroScopeScreen(
       {required this.db,
+      required this.test,
       required this.uid,
       required this.username,
       required this.testType,
@@ -42,6 +47,7 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
   List<GyroscopeEvent> _gyroscopeEvents = [];
   bool _isRecording = false;
   int _countdown = 5;
+
   customizeStatusAndNavigationBar() {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         systemNavigationBarColor: Colors.white,
@@ -57,8 +63,11 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
     _startRecording();
   }
 
-  void sendResultsToDatabase(double disp) async {
-    int score = 100 - (sqrt(100) ~/ 1);
+  int calcScoreFromDisp(double disp) {
+    return 100 - (sqrt(disp) ~/ 1);
+  }
+
+  void sendResultsToDatabase() async {
     Test newTest = Test();
     DateTime d = DateTime.now();
     newTest.date = d.millisecondsSinceEpoch ~/ 1000;
@@ -67,7 +76,11 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
         " on " +
         DateFormat('MM/dd/yy HH:mm').format(d);
     newTest.oId = widget.uid;
-    newTest.score = score;
+    newTest.scoreL = widget.test.scoreL;
+    newTest.scoreR = widget.test.scoreR;
+    newTest.scoreS = widget.test.scoreS;
+    newTest.scoreB = widget.test.scoreB;
+    newTest.scoreFinal = widget.test.scoreFinal;
     int id = await widget.db.saveTest(newTest);
   }
 
@@ -101,26 +114,49 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
         }
       });
     }
-    ;
     _calculateDisplacement();
   }
 
   void _stopRecording() {
     _isRecording = false;
-    sendResultsToDatabase(_displacement);
-    if (widget.leg == 'right') {
+    // sendResultsToDatabase(_displacement);
+    if (widget.leg == 'both') {
+      widget.test.scoreB = calcScoreFromDisp(_displacement);
+      widget.test.scoreFinal =
+          ((widget.test.scoreS ?? 0) + (widget.test.scoreB ?? 0)) ~/ 2;
+      sendResultsToDatabase();
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => TestResultScreen(score: _displacement),
+          builder: (context) =>
+              TestResultScreen(score: (widget.test.scoreFinal ?? 0)),
         ),
       );
-    } else {
+    } else if (widget.leg == 'left') {
+      widget.test.scoreL = calcScoreFromDisp(_displacement);
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => TestReadyRightScreen(
               db: widget.db,
+              test: widget.test,
+              uid: widget.uid,
+              username: widget.username,
+              testType: widget.testType,
+              displacement: _displacement),
+        ),
+      );
+    } else {
+      // widget.leg == right | Test 2
+      widget.test.scoreR = calcScoreFromDisp(_displacement);
+      widget.test.scoreS =
+          ((widget.test.scoreL ?? 0) + (widget.test.scoreR ?? 0)) ~/ 2;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TestReadyBothScreen(
+              db: widget.db,
+              test: widget.test,
               uid: widget.uid,
               username: widget.username,
               testType: widget.testType,
@@ -128,6 +164,15 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
         ),
       );
     }
+    debugPrint(widget.test.scoreL.toString() +
+        " " +
+        widget.test.scoreR.toString() +
+        " " +
+        widget.test.scoreS.toString() +
+        " " +
+        widget.test.scoreB.toString() +
+        " -> " +
+        widget.test.scoreFinal.toString());
   }
 
   void _calculateDisplacement() {
@@ -159,7 +204,7 @@ class _GyroScopeScreenState extends State<GyroScopeScreen> {
           children: <Widget>[
             const Text(
               'Hold for 5 seconds:',
-              style: TextStyle(fontSize: 40),
+              style: TextStyle(fontSize: 35),
             ),
             Text(
               '$_countdown',

@@ -38,7 +38,11 @@ class DatabaseHelper {
       create table if not exists $tableTests (
         $testId integer primary key autoincrement,
         $testName text,
-        $testScore integer,
+        $testScoreL integer,
+        $testScoreR integer,
+        $testScoreS integer,
+        $testScoreB integer,
+        $testScoreFinal integer,
         $ownerId integer,
         $testDate integer
       );
@@ -96,9 +100,20 @@ class DatabaseHelper {
     }
   }
 
-  Future<String> searchUserById(int uid) async {
+  Future<void> deleteTestById(int id) async {
+    var dbClient = await db;
+    await dbClient.delete(
+      tableTests,
+      where: '$testId = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<User> searchUserById(int uid) async {
     var dbClient = await db;
     List<String> columnsToSelect = [
+      userId,
+      userUname,
       userName,
     ];
     String whereString = '$userId= ?';
@@ -112,10 +127,10 @@ class DatabaseHelper {
 
     // print the results
     if (result.length == 1) {
-      return result[0]['name'];
+      return User.fromMap(result[0]);
     }
     debugPrint("Query failed | Hits: " + result.length.toString());
-    return "XX2X";
+    return User();
   }
 
   Future<int> saveUser(User user) async {
@@ -139,7 +154,7 @@ class DatabaseHelper {
 
   Future<int> saveTest(Test test) async {
     var dbClient = await db;
-    // debugPrint("NEW: " + test.toMap().toString());
+    debugPrint("NEW: " + test.toMap().toString());
 
     int ret = await dbClient.insert(tableTests, test.toMap());
     List<Test> tests = await getTests();
@@ -155,7 +170,17 @@ class DatabaseHelper {
     List<dynamic> whereArguments = [id];
     List<Map> maps = await dbClient.query(
       tableTests,
-      columns: [testId, testName, testScore, ownerId, testDate],
+      columns: [
+        testId,
+        testName,
+        testScoreFinal,
+        testScoreL,
+        testScoreR,
+        testScoreS,
+        testScoreB,
+        ownerId,
+        testDate
+      ],
       where: whereString,
       whereArgs: whereArguments,
     );
@@ -170,8 +195,17 @@ class DatabaseHelper {
 
   Future<List<Test>> getTests() async {
     var dbClient = await db;
-    List<Map> maps = await dbClient.query(tableTests,
-        columns: [testId, testName, testScore, ownerId, testDate]);
+    List<Map> maps = await dbClient.query(tableTests, columns: [
+      testId,
+      testName,
+      testScoreFinal,
+      testScoreL,
+      testScoreR,
+      testScoreS,
+      testScoreB,
+      ownerId,
+      testDate
+    ]);
     List<Test> tests = [];
     if (maps.isNotEmpty) {
       for (int i = 0; i < maps.length; i++) {
@@ -187,7 +221,17 @@ class DatabaseHelper {
     List<dynamic> whereArguments = [oid];
     List<Map> result = await dbClient.query(
       tableTests,
-      columns: [testId, testName, testScore, ownerId, testDate],
+      columns: [
+        testId,
+        testName,
+        testScoreFinal,
+        testScoreL,
+        testScoreR,
+        testScoreS,
+        testScoreB,
+        ownerId,
+        testDate
+      ],
       where: whereString,
       whereArgs: whereArguments,
     );
