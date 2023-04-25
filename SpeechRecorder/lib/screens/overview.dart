@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:record_with_play/services/database/database.dart';
 import 'scatterplot_chart.dart';
+import 'line_chart.dart';
 
 class OverviewWidget extends StatelessWidget {
   final DatabaseHelper db;
+  final int uid;
   final String username;
   final VoidCallback logout;
   final bool admin;
@@ -11,6 +13,7 @@ class OverviewWidget extends StatelessWidget {
   const OverviewWidget({
     Key? key,
     required this.db,
+    required this.uid,
     required this.username,
     required this.admin,
     required this.logout,
@@ -29,8 +32,9 @@ class OverviewWidget extends StatelessWidget {
             ),
             Visibility(
               visible: admin,
-              child: ScatterPlot(
+              child: LineChartWidget(
                 db: db,
+                uid: uid,
               ),
             )
           ],
