@@ -26,9 +26,8 @@ class OverviewWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8.0, 15.0, 8.0, 8.0),
-              child: Text('This is $username\'s overview page.'),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(10.0, 20.0, 20.0, 10.0),
             ),
             Expanded(
                 child: Scrollbar(

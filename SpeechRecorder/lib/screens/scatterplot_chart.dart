@@ -41,7 +41,7 @@ class _ScatterPlotState extends State<ScatterPlot> {
       children: [
         SizedBox(
           // color: Colors.grey[200], // for debugging purposes
-          width: 350,
+          width: 320,
           height: 300,
           child: Echarts(
             option: '''
@@ -57,7 +57,7 @@ class _ScatterPlotState extends State<ScatterPlot> {
                   containLabel: true,
                 },
                 xAxis: {},
-                yAxis: { name: 'Double-Leg Score'},
+                yAxis: { name: '2-Leg Score'},
                 series: [{
                   type: 'scatter',
                   data: ${data.toString()},

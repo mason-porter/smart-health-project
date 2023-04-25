@@ -46,7 +46,7 @@ class _LineChartWidgetState extends State<LineChartWidget> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          width: 350,
+          width: 320,
           height: 300,
           child: Echarts(
             option: '''
