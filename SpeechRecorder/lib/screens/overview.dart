@@ -30,13 +30,22 @@ class OverviewWidget extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(8.0, 15.0, 8.0, 8.0),
               child: Text('This is $username\'s overview page.'),
             ),
-            Visibility(
-              visible: admin,
-              child: LineChartWidget(
-                db: db,
-                uid: uid,
+            Expanded(
+              child: ListView(
+                children: [
+                  LineChartWidget(
+                    db: db,
+                    uid: uid,
+                  ),
+                  Visibility(
+                    visible: admin,
+                    child: ScatterPlot(
+                      db: db,
+                    ),
+                  ),
+                ],
               ),
-            )
+            ),
           ],
         ),
       ),

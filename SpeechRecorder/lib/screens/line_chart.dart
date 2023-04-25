@@ -29,9 +29,8 @@ class _LineChartWidgetState extends State<LineChartWidget> {
   void getTestsData() async {
     List<List<num>> newData = [];
     List<Test>? tests = await widget.db.getTestsByOwnerId(widget.uid);
-    //List<Test> tests = await widget.db.getTests();
     for (Test test in tests) {
-      newData.add([tests.indexOf(test) + 1, test.score ?? 0]);
+      newData.add([tests.indexOf(test) + 1, test.scoreFinal ?? 0]);
     }
     setState(() {
       data = newData;
@@ -49,7 +48,6 @@ class _LineChartWidgetState extends State<LineChartWidget> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          // color: Colors.grey[200], // for debugging purposes
           width: 400,
           height: 300,
           child: Echarts(
